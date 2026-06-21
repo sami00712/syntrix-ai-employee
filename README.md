@@ -1,1 +1,2 @@
 "# syntrix-ai" 
+"# ai-syntrix" 
