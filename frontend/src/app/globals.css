@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-slate-900 antialiased;
+    background: #F4F7FB;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+.typing-dot {
+  width: 4px;
+  height: 4px;
+  margin: 0 1.5px;
+  background-color: currentColor;
+  border-radius: 50%;
+  display: inline-block;
+  animation: typing 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
+  40% { transform: translateY(-4px); opacity: 1; }
+}
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+.glass-panel {
+  @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
+}
+
+.premium-card {
+  @apply bg-white rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] transition-all duration-300;
+}
+
+.premium-card:hover {
+  @apply shadow-[0_20px_60px_-15px_rgba(79,70,229,0.12)] -translate-y-1;
+}
+
+.indigo-gradient {
+  @apply bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500;
+}
+
+.glass-auth {
+  @apply bg-white/[0.03] border border-white/5 backdrop-blur-2xl shadow-2xl shadow-black/20;
+}
+
+.input-premium {
+  @apply w-full pl-10 pr-4 py-3 bg-white/5 border border-white/5 rounded-xl text-sm text-white outline-none focus:border-indigo-500/30 focus:bg-white/[0.05] transition-all placeholder:text-white/20;
+}
+
+.btn-premium {
+  @apply w-full py-3 bg-gradient-to-r from-indigo-500 to-violet-500 text-white rounded-xl font-semibold shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+}
+
+.btn-google {
+  @apply w-full py-3 bg-white/5 border border-white/10 text-white rounded-xl font-medium hover:bg-white/[0.08] hover:border-white/20 transition-all flex items-center justify-center gap-3;
+}
+
+.otp-input {
+  @apply w-11 h-14 bg-white/5 border border-white/5 rounded-xl text-center text-lg font-bold text-white outline-none focus:border-indigo-500/30 focus:ring-1 focus:ring-indigo-500/20 transition-all;
+}
+
+.glow-orb {
+  @apply absolute rounded-full blur-[120px] pointer-events-none;
+}
