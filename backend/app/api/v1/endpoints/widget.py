@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Header
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Header, Body
 from sqlmodel import Session, select
 from app.db.session import get_session, engine
 from app.models.models import Conversation, ChatSession, Lead, Business
@@ -41,7 +41,7 @@ async def get_widget_session_history(
     return [MessageRead(role=m.role, message=m.message, timestamp=m.timestamp) for m in history]
 
 @router.post("/session", response_model=ChatSession)
-def create_widget_session(api_key: str, db: Session = Depends(get_session)):
+def create_widget_session(api_key: str = Body(...), db: Session = Depends(get_session)):
     business = db.exec(select(Business).where(Business.api_key == api_key)).first()
     if not business:
         raise HTTPException(status_code=404, detail="Invalid API Key")
