@@ -48,11 +48,7 @@
   function getButtonContent() {
     if (isOpen) return ICONS.close;
     if (configData && configData.logo_url) {
-      return '<img src="' + configData.logo_url + '" alt="" style="width:30px;height:30px;border-radius:8px;object-fit:cover;" />';
-    }
-    if (configData && configData.business_name) {
-      var letter = configData.business_name.charAt(0).toUpperCase();
-      return '<span style="font-size:22px;font-weight:700;line-height:1;">' + letter + '</span>';
+      return '<img src="' + configData.logo_url + '" alt="" style="width:30px;height:30px;border-radius:8px;object-fit:cover;" onerror="this.style.display=\'none\'" />';
     }
     return ICONS[currentIcon] || ICONS.bot;
   }

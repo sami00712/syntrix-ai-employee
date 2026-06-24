@@ -39,6 +39,7 @@ export default function ChatPreview({
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<number | null>(null);
+  const [logoFailed, setLogoFailed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -123,8 +124,8 @@ export default function ChatPreview({
           style={{ backgroundColor: headerColor, color: textColor }}
         >
           <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-bold text-sm overflow-hidden flex-shrink-0 backdrop-blur-sm">
-            {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+            {logoUrl && !logoFailed ? (
+              <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" onError={() => setLogoFailed(true)} />
             ) : (
               businessName?.[0] || 'A'
             )}
@@ -150,8 +151,8 @@ export default function ChatPreview({
               className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0 overflow-hidden"
               style={{ backgroundColor: primaryColor }}
             >
-              {logoUrl ? (
-                <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+              {logoUrl && !logoFailed ? (
+                <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" onError={() => setLogoFailed(true)} />
               ) : (
                 agentName?.[0] || 'A'
               )}
@@ -173,18 +174,21 @@ export default function ChatPreview({
                 {msg.role === 'user' ? (
                   <User size={12} />
                 ) : (
-                  logoUrl ? (
-                    <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+                  logoUrl && !logoFailed ? (
+                    <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" onError={() => setLogoFailed(true)} />
                   ) : (
                     agentName?.[0] || 'A'
                   )
                 )}
               </div>
-              <div className={`max-w-[80%] p-3.5 rounded-2xl shadow-sm border text-sm leading-relaxed whitespace-pre-wrap ${
-                msg.role === 'user'
-                  ? 'bg-indigo-500 text-white rounded-tr-none border-indigo-400/20'
-                  : 'bg-black/20 backdrop-blur-sm text-white/80 rounded-tl-none border-white/5'
-              }`}>
+              <div
+                className={`max-w-[80%] p-3.5 rounded-2xl shadow-sm border text-sm leading-relaxed whitespace-pre-wrap ${
+                  msg.role === 'user'
+                    ? 'text-white rounded-tr-none'
+                    : 'bg-black/20 backdrop-blur-sm text-white/80 rounded-tl-none border-white/5'
+                }`}
+                style={msg.role === 'user' ? { backgroundColor: primaryColor, borderColor: `${primaryColor}33` } : {}}
+              >
                 {msg.content}
               </div>
             </div>
@@ -196,13 +200,13 @@ export default function ChatPreview({
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0 overflow-hidden"
                 style={{ backgroundColor: primaryColor }}
               >
-                {logoUrl ? (
-                  <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
-                ) : (
-                  agentName?.[0] || 'A'
-                )}
-              </div>
-              <div className="bg-black/20 backdrop-blur-sm p-3.5 rounded-2xl rounded-tl-none border border-white/5">
+              {logoUrl && !logoFailed ? (
+                <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" onError={() => setLogoFailed(true)} />
+              ) : (
+                agentName?.[0] || 'A'
+              )}
+            </div>
+            <div className="bg-black/20 backdrop-blur-sm p-3.5 rounded-2xl rounded-tl-none border border-white/5">
                 <div className="flex gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-white/20 animate-bounce" style={{ animationDelay: '0ms' }} />
                   <div className="w-2 h-2 rounded-full bg-white/20 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -228,7 +232,7 @@ export default function ChatPreview({
               onClick={handleSend}
               disabled={loading || !input.trim()}
               className="absolute right-1.5 w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-lg transition-all active:scale-95 disabled:opacity-30"
-              style={{ backgroundColor: primaryColor }}
+              style={{ backgroundColor: buttonColor }}
             >
               <Send size={14} />
             </button>

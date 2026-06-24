@@ -88,13 +88,15 @@ export default function WidgetPage() {
   const logoUrl = config?.logo_url;
 
   function Avatar({ src, fallback, size = 32 }: { src?: string; fallback: string; size?: number }) {
+    const [imgFailed, setImgFailed] = useState(false);
+    const showImg = src && !imgFailed;
     return (
       <div
         className="rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center text-white font-bold"
         style={{ width: size, height: size, fontSize: size * 0.45, backgroundColor: pc, minWidth: size }}
       >
-        {src ? (
-          <img src={src} alt="" className="w-full h-full object-cover" />
+        {showImg ? (
+          <img src={src} alt="" className="w-full h-full object-cover" onError={() => setImgFailed(true)} />
         ) : (
           fallback
         )}
