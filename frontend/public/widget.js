@@ -8,8 +8,6 @@
   } else {
     BASE_URL = window.location.origin;
   }
-  var BACKEND_URL = 'https://syntrix-ai-employee-production.up.railway.app';
-
   if (!API_KEY) {
     console.error('AI Employee Widget: API Key is missing!');
     return;
@@ -57,7 +55,7 @@
     button.innerHTML = getButtonContent();
   }
 
-  fetch(BACKEND_URL + '/api/v1/widget/config/' + API_KEY)
+  fetch(BASE_URL + '/api/v1/widget/config/' + API_KEY)
     .then(function(r) { return r.json(); })
     .then(function(config) {
       configData = config;
