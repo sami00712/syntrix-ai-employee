@@ -44,53 +44,105 @@
   document.body.appendChild(container);
 
   function getButtonContent() {
-    if (isOpen) return ICONS.close;
-    if (configData && configData.logo_url) {
-      return '<img src="' + configData.logo_url + '" alt="" style="width:30px;height:30px;border-radius:8px;object-fit:cover;" onerror="this.style.display=\'none\'" />';
+    var result;
+    if (isOpen) {
+      result = ICONS.close;
+      console.log('6a.getButtonContent: isOpen=true, returning close icon');
+      return result;
     }
-    return ICONS[currentIcon] || ICONS.bot;
+    if (configData && configData.logo_url) {
+      result = '<img src="' + configData.logo_url + '" alt="" style="width:30px;height:30px;border-radius:8px;object-fit:cover;" onerror="this.style.display=\'none\'" />';
+      console.log('6a.getButtonContent: logo_url is set (' + configData.logo_url + '), returning <img> (OVERWRITES icon!)');
+      return result;
+    }
+    result = ICONS[currentIcon] || ICONS.bot;
+    console.log('6a.getButtonContent: returning ICONS["' + currentIcon + '"]', result ? '(found)' : '(MISSING, using bot fallback)');
+    return result;
   }
 
   function updateButton() {
-    button.innerHTML = getButtonContent();
+    var content = getButtonContent();
+    console.log('6b.updateButton: setting button.innerHTML to', content.substring(0, 80) + '...');
+    button.innerHTML = content;
+    console.log('6b.updateButton: button.innerHTML after write is', button.innerHTML.substring(0, 80) + '...');
+    console.log('6b.updateButton: button style.background is now:', button.style.background || getComputedStyle(button).background);
   }
 
   fetch(BASE_URL + '/api/v1/widget/config/' + API_KEY)
     .then(function(r) { return r.json(); })
     .then(function(config) {
+      console.log('=== WIDGET DEBUG ===');
+      console.log('1. Full config object received:', JSON.stringify(config, null, 2));
+      console.log('2. config.widget_icon value:', JSON.stringify(config.widget_icon));
+      console.log('2a. config.button_color value:', JSON.stringify(config.button_color));
+      console.log('2b. config.logo_url value:', JSON.stringify(config.logo_url));
+
+      var bgBefore = button.style.background || button.style.backgroundColor || '(computed: ' + getComputedStyle(button).background + ')';
+      console.log('5a. Button background BEFORE applying config:', bgBefore);
+
       configData = config;
       if (config.button_color) {
         button.style.setProperty('background', config.button_color, 'important');
         button.style.setProperty('box-shadow', '0 8px 32px ' + config.button_color + '66', 'important');
+        var bgAfter = button.style.background || button.style.backgroundColor || '(computed: ' + getComputedStyle(button).background + ')';
+        console.log('5b. Button background AFTER applying config.button_color (' + config.button_color + '):', bgAfter);
+      } else {
+        console.log('5b. config.button_color was falsy — NOT applied (value=' + JSON.stringify(config.button_color) + ')');
       }
+
       if (config.widget_icon) {
         currentIcon = config.widget_icon;
+        console.log('3. currentIcon after assignment:', currentIcon);
+        console.log('4. ICONS[currentIcon] result:', ICONS[currentIcon]);
+        if (!ICONS[currentIcon]) {
+          console.warn('4a. WARNING: ICONS["' + currentIcon + '"] is undefined! Falling back to ICONS.bot');
+        }
+      } else {
+        console.log('3. config.widget_icon was falsy — currentIcon stays:', currentIcon);
+        console.log('4. ICONS[currentIcon] result:', ICONS[currentIcon]);
       }
+      console.log('6a. updateButton() called — will set innerHTML');
       updateButton();
+      console.log('6b. button.innerHTML after updateButton():', button.innerHTML);
+      console.log('=== END WIDGET DEBUG ===');
     })
     .catch(function(err) { console.error('Syntrix AI: Failed to load branding', err); });
 
   button.onclick = function() {
     isOpen = !isOpen;
+    console.log('=== CLICK DEBUG ===');
+    console.log('isOpen toggled to:', isOpen);
+    console.log('6c. CLICK: button.style.background BEFORE updateButton():', button.style.background || getComputedStyle(button).background);
     if (isOpen) {
       iframeWrapper.style.opacity = '1';
       iframeWrapper.style.visibility = 'visible';
       iframeWrapper.style.transform = 'translateY(0) scale(1)';
       button.style.transform = 'scale(0.9)';
+      console.log('CLICK: opener — transform set to scale(0.9)');
     } else {
       iframeWrapper.style.opacity = '0';
       iframeWrapper.style.visibility = 'hidden';
       iframeWrapper.style.transform = 'translateY(16px) scale(0.96)';
       button.style.transform = 'scale(1)';
+      console.log('CLICK: closer — transform set to scale(1)');
     }
     updateButton();
+    console.log('6c. CLICK: button.innerHTML after updateButton():', button.innerHTML.substring(0, 80) + '...');
+    console.log('6c. CLICK: button.style.background after:', button.style.background || getComputedStyle(button).background);
+    console.log('=== CLICK DEBUG END ===');
   };
 
   button.onmouseenter = function() {
-    if (!isOpen) button.style.transform = 'translateY(-3px) scale(1.06)';
+    if (!isOpen) {
+      button.style.transform = 'translateY(-3px) scale(1.06)';
+      console.log('HOVER enter: transform set to translateY(-3px) scale(1.06)');
+    }
   };
   button.onmouseleave = function() {
-    if (!isOpen) button.style.transform = 'translateY(0) scale(1)';
+    if (!isOpen) {
+      button.style.transform = 'translateY(0) scale(1)';
+      console.log('HOVER leave: transform set to translateY(0) scale(1)');
+    }
   };
 
 })();
