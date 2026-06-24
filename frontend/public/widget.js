@@ -44,20 +44,20 @@
   document.body.appendChild(container);
 
   function getButtonContent() {
-    var result;
     if (isOpen) {
-      result = ICONS.close;
       console.log('6a.getButtonContent: isOpen=true, returning close icon');
-      return result;
+      return ICONS.close;
     }
+    var iconSvg = ICONS[currentIcon] || ICONS.bot;
     if (configData && configData.logo_url) {
-      result = '<img src="' + configData.logo_url + '" alt="" style="width:30px;height:30px;border-radius:8px;object-fit:cover;" onerror="this.style.display=\'none\'" />';
-      console.log('6a.getButtonContent: logo_url is set (' + configData.logo_url + '), returning <img> (OVERWRITES icon!)');
-      return result;
+      console.log('6a.getButtonContent: logo_url set, rendering icon + logo overlay');
+      return '<span style="position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%;">' +
+        iconSvg +
+        '<img src="' + configData.logo_url + '" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:18px;" onerror="this.remove()" />' +
+        '</span>';
     }
-    result = ICONS[currentIcon] || ICONS.bot;
-    console.log('6a.getButtonContent: returning ICONS["' + currentIcon + '"]', result ? '(found)' : '(MISSING, using bot fallback)');
-    return result;
+    console.log('6a.getButtonContent: returning ICONS["' + currentIcon + '"]', iconSvg ? '(found)' : '(MISSING, using bot fallback)');
+    return iconSvg;
   }
 
   function updateButton() {
