@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, User, Mail, Phone, Building, Briefcase, Calendar, MessageCircle, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
@@ -32,8 +32,8 @@ interface Lead {
   created_at: string;
 }
 
-export default function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
+export default function LeadDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const router = useRouter();
   const [lead, setLead] = useState<Lead | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -50,8 +50,8 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       try {
         const headers = { Authorization: `Bearer ${token}` };
         const [leadRes, sessionsRes] = await Promise.all([
-          fetch(`${apiUrl}/leads/${resolvedParams.id}`, { headers }),
-          fetch(`${apiUrl}/leads/${resolvedParams.id}/sessions`, { headers })
+          fetch(`${apiUrl}/leads/${id}`, { headers }),
+          fetch(`${apiUrl}/leads/${id}/sessions`, { headers })
         ]);
         if (!leadRes.ok) throw new Error('Failed to fetch lead');
         const leadData = await leadRes.json();
@@ -68,12 +68,12 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       }
     };
     if (apiUrl && token) fetchLead();
-  }, [apiUrl, token, resolvedParams.id]);
+  }, [apiUrl, token, id]);
 
   const handleStatusChange = async (newStatus: string) => {
     setUpdating(true);
     try {
-      const res = await fetch(`${apiUrl}/leads/${resolvedParams.id}`, {
+      const res = await fetch(`${apiUrl}/leads/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: newStatus })
